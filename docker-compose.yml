@@ -1,0 +1,26 @@
+version: '3.8'
+volumes:
+  data:
+networks:
+  database:
+services:
+  db:
+    container_name: database
+    image: mongo:latest
+    volumes:
+      # Mongo data volume
+      - data:/data/db
+    networks:
+      - database
+  backend:
+    container_name: backend
+    image: node:15.9.0
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/backend
+    networks:
+      - database
+    ports:
+      - 3003:3003
+    command: bash -c "cd /backend && npm i && npm run dev"
